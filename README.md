@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a manually implemented array-based double-ended queue that avoids the typical *circular buffer* approach. Instead of modulo arithmetic, it keeps the data block **centered in the array** and explicitly shifts/reallocates during resizes. This design is tuned for **predictable memory layout** and **balanced access** from both ends.
+This is a manually implemented array-based double-ended queue that avoids the typical circular buffer or doubly linked list approach. Instead of modulo arithmetic, it keeps the data block centered in the array and explicitly shifts/reallocates during resizes. This design is tuned for predictable memory layout and balanced access from both ends.
 
 ---
 
@@ -17,7 +17,7 @@ This ensures the data points are centred on resize, minimizing risk of wasting m
 
 ### 2. **No Modulo Arithmetic**
 
-* Typical array deques wrap indices with `(index % capacity)`; this implementation avoids it entirely.
+* Typical array deques wrap indices with `(index % capacity)`; this implementation avoids it entirely, which is more friendly for modern CPUs.
 * This reduces index calculation overhead and can be more cache-friendly for sequential access.
 
 ### 3. **Symmetrical Growth & Shrink**
@@ -27,10 +27,11 @@ This ensures the data points are centred on resize, minimizing risk of wasting m
   * **Adding** to a full head or tail.
   * **Removing** when the array is ≥ 4× larger than the element count.
 * Resize size is always `size * 2 + 1` to maintain an odd length (ensures perfect centering).
+> Note: resizing is based on `size()` which is the number of data points in the array not the length of the array.
 
 ### 4. **Constant-Time End Operations**
 
-* Insertion/removal at **both ends** is O(1) amortized.
+* Insertion/removal at both ends is O(1) amortized.
 * Memory reallocation during resize is O(n) but infrequent.
 
 ### 5. **Balanced Memory Efficiency**
